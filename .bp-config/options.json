@@ -1,7 +1,0 @@
-{
-  "PHP_VERSION": "{PHP_56_LATEST}",
-  "LIBDIR": "vendor",
-  "COMPOSER_VENDOR_DIR": "vendor",
-  "PHP_EXTENSIONS": ["intl", "tokenizer"],
-  "COMPOSER_INSTALL_OPTIONS": ["--no-scripts"]
-}
