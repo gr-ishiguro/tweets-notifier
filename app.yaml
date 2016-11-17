@@ -1,4 +1,3 @@
-application: tweets-notifier
 version: 1
 runtime: php56
 api_version: 1
