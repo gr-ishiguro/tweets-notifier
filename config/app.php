@@ -86,6 +86,9 @@ return [
     'Cache' => [
         'default' => [
             'className' => 'Memcached',
+            'servers'   => array_map(function($server) { return explode(':', $server, 2); }, explode(',', $_ENV['MEMCACHEDCLOUD_SERVERS'])),
+            'username'  => $_ENV['MEMCACHEDCLOUD_USERNAME'],
+            'password'  => $_ENV['MEMCACHEDCLOUD_PASSWORD'],
         ],
 
         /**
