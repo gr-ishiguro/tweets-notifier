@@ -6,10 +6,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.5.9",
-        "ext-mbstring": "*",
-        "ext-intl": "*",
-        "ext-tokenizer": "*",
-        "ext-gd": "*",
+        "ext-memcached": "*",
         "cakephp/cakephp": "3.3.*",
         "mobiledetect/mobiledetectlib": "2.*",
         "cakephp/migrations": "~1.0",
