@@ -101,6 +101,9 @@ return [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_core_',
             'duration' => '+2 minutes',
+            'servers'   => array_map(function($server) { return explode(':', $server, 2); }, explode(',', $_ENV['MEMCACHEDCLOUD_SERVERS'])),
+            'username'  => $_ENV['MEMCACHEDCLOUD_USERNAME'],
+            'password'  => $_ENV['MEMCACHEDCLOUD_PASSWORD'],
         ],
 
         /**
@@ -113,6 +116,9 @@ return [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_model_',
             'duration' => '+2 minutes',
+            'servers'   => array_map(function($server) { return explode(':', $server, 2); }, explode(',', $_ENV['MEMCACHEDCLOUD_SERVERS'])),
+            'username'  => $_ENV['MEMCACHEDCLOUD_USERNAME'],
+            'password'  => $_ENV['MEMCACHEDCLOUD_PASSWORD'],
         ],
     ],
 
