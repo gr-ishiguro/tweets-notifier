@@ -1,4 +1,5 @@
 <?php
+$dbopt = getenv('DATABASE_URL');
 return [
     /**
      * Debug Level:
@@ -212,7 +213,7 @@ return [
     'Datasources' => [
         'default' => [
             'className' => 'Cake\Database\Connection',
-            'driver' => 'Cake\Database\Driver\Mysql',
+            'driver' => 'Cake\Database\Driver\Postgres',
             'persistent' => false,
             'unix_socket' => '/cloudsql/develop',
             /**
@@ -220,10 +221,11 @@ return [
              * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
              * the following line and set the port accordingly
              */
-            //'port' => 'non_standard_port_number',
-            'username' => 'root',
-            'password' => '',
-            'database' => 'tweets_notifer',
+            'host'     => $dbopts["host"],
+            'port'     => $dbopts["port"],
+            'username' => $dbopts["user"],
+            'password' => $dbopts["pass"],
+            'database' => ltrim($dbopts["path"],'/'),
             'encoding' => 'utf8',
             'timezone' => '+09:00',
             'flags' => [],
