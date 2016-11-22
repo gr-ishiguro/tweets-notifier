@@ -14,11 +14,11 @@
         "mobiledetect/mobiledetectlib": "2.*",
         "cakephp/migrations": "~1.0",
         "cakephp/plugin-installer": "*",
+        "cakephp/debug_kit": "~3.2",
         "abraham/twitteroauth": "^0.7.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",
-        "cakephp/debug_kit": "~3.2",
         "cakephp/bake": "~1.1"
     },
     "suggest": {
