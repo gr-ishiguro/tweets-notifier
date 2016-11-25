@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-    echo "usage: tweets_notifer_resident.sh LOOP_COUNT SLEEP_SECONDS [SHELL_OPTION]"
+    echo "usage: tweets_notifier_resident.sh LOOP_COUNT SLEEP_SECONDS [SHELL_OPTION]"
     exit 1
 fi
 
@@ -11,7 +11,7 @@ shift 2 # 残りの引数を渡すため、引数をシフト
 
 for i in `seq 1 1 $LOOP`
 do
-  bin/cake tweets_notifer $*
+  bin/cake tweets_notifier $*
 
   if [ $i -lt $LOOP ]; then
       sleep $SLEEP
