@@ -36,14 +36,10 @@ class TweetsNotiferShell extends Shell {
          */
         $notifyInformationArray = $this->NotifyInformation->find('all');
 
-        echo count($notifyInformationArray);
-
         foreach ($notifyInformationArray as $notifyInformation) {
-            var_dump($notifyInformation);
-
             // ツイートを検索
             $connection = $this->getTwitterOAuth();
-            $tweets = $connection->get("search/tweets", ["q" => $notifyInformation->search_key, 'count' => 1]);
+            $tweets = $connection->get("search/tweets", ["q" => $notifyInformation->search_key, 'count' => 2]);
 
             foreach (array_reverse($tweets->statuses) as $tweet) {
                 // 最終取得日時より新たなツイートを通知する
