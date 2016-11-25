@@ -36,7 +36,7 @@ class TweetsNotiferShell extends Shell {
          */
         $notifyInformationArray = $this->NotifyInformation->find('all');
 
-        var_dump(array($notifyInformationArray));
+        var_dump(count($notifyInformationArray));
 
         foreach ($notifyInformationArray as $notifyInformation) {
             // ツイートを検索
