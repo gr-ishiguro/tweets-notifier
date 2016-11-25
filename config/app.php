@@ -1,5 +1,5 @@
 <?php
-$dbopt = getenv('DATABASE_URL');
+$dbopts = getenv('DATABASE_URL');
 return [
     /**
      * Debug Level:
