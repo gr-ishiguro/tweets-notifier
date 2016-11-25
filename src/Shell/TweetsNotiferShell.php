@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: usr1600304
- * Date: 2016/11/05
- * Time: 15:03
- */
 namespace App\Shell;
 
 use App\Model\Table\NotifyInformationTable;
@@ -20,7 +14,7 @@ use Psr\Log\LogLevel;
  * @property NotifyInformationTable NotifyInformation
  * @package App\Shell
  */
-class TweetsNotiferShell extends Shell {
+class TweetsNotifierShell extends Shell {
 
     use MailerAwareTrait;
 
@@ -30,27 +24,23 @@ class TweetsNotiferShell extends Shell {
     }
 
     public function main() {
-        /**
-         * 通知情報を全て取得
-         * @var NotifyInformation[] $notifyInformationArray
-         */
-        $notifyInformationArray = $this->NotifyInformation->find('all');
+        // 通知情報を全て取得
+        $query = $this->NotifyInformation->find('all');
 
-        foreach ($notifyInformationArray as $notifyInformation) {
+        foreach ($query as $row) {
+            /** @var NotifyInformation $row */
+
             // ツイートを検索
             $connection = $this->getTwitterOAuth();
-            $tweets = $connection->get("search/tweets", ["q" => $notifyInformation->search_key, 'count' => 2]);
+            $tweets = $connection->get("search/tweets", ["q" => $row->search_key, 'since_id' => $row->last_acquired]);
 
             foreach (array_reverse($tweets->statuses) as $tweet) {
-                // 最終取得日時より新たなツイートを通知する
-                var_dump($tweet);
-                if ($notifyInformation->last_acquired < $tweet->id) {
-                    $this->notice($notifyInformation, $tweet);
+                // Callbackへ通知
+                $this->notice($row, $tweet);
 
-                    // 最終取得日時を更新して保存
-                    $notifyInformation->last_acquired = $tweet->id;
-                    $this->NotifyInformation->save($notifyInformation);
-                }
+                // 最終取得IDを更新して保存
+                $row->last_acquired = $tweet->id;
+                $this->NotifyInformation->save($row);
             }
         }
     }
@@ -61,43 +51,36 @@ class TweetsNotiferShell extends Shell {
      * @param \stdClass         $tweet
      */
     public function notice($notifyInformation, $tweet) {
-        $this->out('callbackに通知します:' . $notifyInformation->callback);
-        $this->log($notifyInformation->search_key, LogLevel::INFO);
-        $this->log($notifyInformation->callback, LogLevel::INFO);
-        $this->log($tweet->user->name . ' @' . $tweet->user->screen_name, LogLevel::INFO);
-        $this->log(date('Y-m-d H:i:s', strtotime($tweet->created_at)), LogLevel::INFO);
-        $this->log($tweet->text, LogLevel::INFO);
+        $title = '新着ツイート通知(' . $notifyInformation->search_key . ')';
+        $text = $tweet->user->name . ' '
+            . '@' . $tweet->user->screen_name . "\n"
+            . date('Y-m-d H:i:s', strtotime($tweet->created_at)) . "\n"
+            . $tweet->text;
 
-        // メール通知
-        if (filter_var($notifyInformation->callback, FILTER_VALIDATE_EMAIL)) {
-            $this->noticeToEMail($notifyInformation, $tweet);
-        } else if (preg_match('/^slack:/', $notifyInformation->callback)) {
-            $this->noticeToSlack($notifyInformation, $tweet);
+        $this->log($notifyInformation->callback, LogLevel::INFO);
+        $this->log($title, LogLevel::INFO);
+        $this->log($text, LogLevel::INFO);
+
+        if (preg_match('/^email@/', $notifyInformation->callback)) {
+            // メール通知
+            $to = preg_replace('/^email@/', '', $notifyInformation->callback);
+            $this->getMailer('User')->send('tweetNotify', [$to, $title, $text]);
+        } else if (preg_match('/^slack@/', $notifyInformation->callback)) {
+            // Slack通知
+            $url = preg_replace('/^slack@/', '', $notifyInformation->callback);
+            $this->noticeToSlack($url, $title, $text);
         }
     }
 
     /**
-     * メール通知
-     * @param NotifyInformation $notifyInformation
-     * @param \stdClass         $tweet
+     * Slack通知
+     * @param string $url [Webhook URL]欄に表示されているURL
+     * @param string $title
+     * @param string $text
      */
-    public function noticeToEMail($notifyInformation, $tweet) {
-        $this->getMailer('User')->send('tweetNotify', [$notifyInformation, $tweet]);
-    }
-
-    public function noticeToSlack($notifyInformation, $tweet) {
-        // [Webhook URL]欄に表示されているURL
-        $url = preg_replace('/^slack:/', '', $notifyInformation->callback);
-        var_dump($url);
-
+    public function noticeToSlack($url, $title, $text) {
         // Slackに投稿するメッセージ
-        $msg = array(
-            'username' => '新着ツイート通知(' . $notifyInformation->search_key . ')',
-            'text' => $tweet->user->name . ' '
-                . '@' . $tweet->user->screen_name . "\n"
-                . date('Y-m-d H:i:s', strtotime($tweet->created_at)) . "\n"
-                . $tweet->text
-        );
+        $msg = ['username' => $title, 'text' => $text];
         $msg = json_encode($msg);
         $msg = 'payload=' . urlencode($msg);
 
@@ -116,11 +99,9 @@ class TweetsNotiferShell extends Shell {
      */
     protected function getTwitterOAuth() {
         // TODO Twitter OAuthキー
-        $consumer_key = 'fFnB5weylKYLzbO5cg3iHBP2I';
-        $consumer_secret = 'lmuQRX1w8sGrdMVB4OyswuDhH3F7MsDp7ArU9mUiUyqTJTYAvH';
         $access_token = '2896602344-sSIsBFsAAmlwzpHTRgGChf82d8GX4aqJcnKoy9g';
         $access_token_secret = 'nv9P5DPByzYo1qsAdHAMyXZEOVk947KH9dB22WPDqXyav';
 
-        return new TwitterOAuth($consumer_key, $consumer_secret, $access_token, $access_token_secret);
+        return new TwitterOAuth(getenv('CONSUMER_KEY'), getenv('CONSUMER_SECRET'), $access_token, $access_token_secret);
     }
 }
