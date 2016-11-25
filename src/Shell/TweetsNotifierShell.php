@@ -32,7 +32,11 @@ class TweetsNotifierShell extends Shell {
 
             // ツイートを検索
             $connection = $this->getTwitterOAuth();
-            $tweets = $connection->get("search/tweets", ["q" => $row->search_key, 'since_id' => $row->last_acquired]);
+            $option = ["q" => $row->search_key];
+            if (!empty($row->last_acquired)) {
+                $option['since_id'] =  $row->last_acquired;
+            }
+            $tweets = $connection->get("search/tweets", $option);
 
             foreach (array_reverse($tweets->statuses) as $tweet) {
                 // Callbackへ通知
