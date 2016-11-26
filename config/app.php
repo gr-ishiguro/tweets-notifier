@@ -86,9 +86,6 @@ return [
     'Cache' => [
         'default' => [
             'className' => 'Memcached',
-            'servers'   => env('MEMCACHIER_SERVERS'),
-            'username'  => env('MEMCACHIER_USERNAME'),
-            'password'  => env('MEMCACHIER_PASSWORD'),
         ],
 
         /**
@@ -101,6 +98,9 @@ return [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_core_',
             'duration' => '+2 minutes',
+            'servers'   => env('MEMCACHIER_SERVERS'),
+            'username'  => env('MEMCACHIER_USERNAME'),
+            'password'  => env('MEMCACHIER_PASSWORD'),
         ],
 
         /**
