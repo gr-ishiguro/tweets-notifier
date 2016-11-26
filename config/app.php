@@ -190,8 +190,8 @@ return [
         ],
         'gmail' => [
             'className' => 'Smtp',
-            'host' => 'smtp.gmail.com',
-            'port' => 587,
+            'host' => 'ssl://smtp.gmail.com',
+            'port' => 465,
             'timeout' => 30,
             'username' => env('MAIL_USER_NAME'),
             'password' => env('MAIL_PASSWORD'),
