@@ -1,5 +1,5 @@
 <?php
-$dbopts = parse_url(getenv('DATABASE_URL'));
+$dbopts = parse_url(env('DATABASE_URL'));
 return [
     /**
      * Debug Level:
@@ -86,9 +86,9 @@ return [
     'Cache' => [
         'default' => [
             'className' => 'Memcached',
-            'servers'   => getenv('MEMCACHIER_SERVERS'),
-            'username'  => getenv('MEMCACHIER_USERNAME'),
-            'password'  => getenv('MEMCACHIER_PASSWORD'),
+            'servers'   => env('MEMCACHIER_SERVERS'),
+            'username'  => env('MEMCACHIER_USERNAME'),
+            'password'  => env('MEMCACHIER_PASSWORD'),
         ],
 
         /**
@@ -101,9 +101,6 @@ return [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_core_',
             'duration' => '+2 minutes',
-            'servers'   => getenv('MEMCACHIER_SERVERS'),
-            'username'  => getenv('MEMCACHIER_USERNAME'),
-            'password'  => getenv('MEMCACHIER_PASSWORD'),
         ],
 
         /**
@@ -116,9 +113,6 @@ return [
             'className' => 'Memcached',
             'prefix' => 'myapp_cake_model_',
             'duration' => '+2 minutes',
-            'servers'   => getenv('MEMCACHIER_SERVERS'),
-            'username'  => getenv('MEMCACHIER_USERNAME'),
-            'password'  => getenv('MEMCACHIER_PASSWORD'),
         ],
     ],
 
@@ -191,6 +185,17 @@ return [
             'tls' => null,
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
+        'gmail' => [
+            'className' => 'Smtp',
+            'host' => 'smtp.gmail.com',
+            'port' => 587,
+            'timeout' => 30,
+            'username' => env('MAIL_USER_NAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'client' => null,
+            'tls' => null,
+            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+        ],
     ],
 
     /**
@@ -204,7 +209,7 @@ return [
      */
     'Email' => [
         'default' => [
-            'transport' => 'default',
+            'transport' => env('DEFAULT_TRANSPORT', 'default'),
             'from' => 'you@localhost',
             //'charset' => 'utf-8',
             //'headerCharset' => 'utf-8',

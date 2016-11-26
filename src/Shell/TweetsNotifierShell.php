@@ -61,9 +61,9 @@ class TweetsNotifierShell extends Shell {
             . date('Y-m-d H:i:s', strtotime($tweet->created_at)) . "\n"
             . $tweet->text;
 
-        $this->log($notifyInformation->callback, LogLevel::INFO);
-        $this->log($title, LogLevel::INFO);
-        $this->log($text, LogLevel::INFO);
+        $this->log('callback:' . $notifyInformation->callback, LogLevel::INFO);
+        $this->log('title   :' . $title, LogLevel::INFO);
+        $this->log('text    :' . $text, LogLevel::INFO);
 
         if (preg_match('/^email@/', $notifyInformation->callback)) {
             // メール通知
