@@ -1,29 +1,40 @@
 <?php
 namespace App\Shell;
 
+use App\Controller\Component\NoticeToEmailComponent;
+use App\Controller\Component\NoticeToSlackWebhookComponent;
+use App\Controller\Component\TwitterApiComponent;
+use Cake\Controller\ComponentRegistry;
 use App\Model\Table\NotifyInformationTable;
 use App\Model\Entity\NotifyInformation;
 use Cake\Console\Shell;
-use Abraham\TwitterOAuth\TwitterOAuth;
-use Cake\Mailer\MailerAwareTrait;
 use Psr\Log\LogLevel;
-
+use Abraham\TwitterOAuth\TwitterOAuth;
 
 /**
  * Class TweetsNotiferShell
- * @property NotifyInformationTable NotifyInformation
+ * @property NotifyInformationTable        NotifyInformation
+ * @property NoticeToEmailComponent        NoticeToEmail
+ * @property TwitterApiComponent           TwitterApi
+ * @property NoticeToSlackWebhookComponent NoticeToSlackWebhook
  * @package App\Shell
  */
-class TweetsNotifierShell extends Shell {
-
-    use MailerAwareTrait;
-
-    public function initialize() {
+class TweetsNotifierShell extends Shell
+{
+    public function initialize()
+    {
         parent::initialize();
         $this->loadModel('NotifyInformation');
+
+        $this->NoticeToEmail = new NoticeToEmailComponent(new ComponentRegistry());
+        $this->NoticeToSlackWebhook = new NoticeToSlackWebhookComponent(new ComponentRegistry());
+        $this->TwitterApi = new TwitterApiComponent(new ComponentRegistry());
     }
 
-    public function main() {
+    public function main()
+    {
+        $this->TwitterApi->setTwitterOAuth($this->getTwitterOAuth());
+
         // 通知情報を全て取得
         $query = $this->NotifyInformation->find('all');
 
@@ -31,12 +42,7 @@ class TweetsNotifierShell extends Shell {
             /** @var NotifyInformation $row */
 
             // ツイートを検索
-            $connection = $this->getTwitterOAuth();
-            $option = ["q" => $row->search_key];
-            if (!empty($row->last_acquired)) {
-                $option['since_id'] =  $row->last_acquired;
-            }
-            $tweets = $connection->get("search/tweets", $option);
+            $tweets = $this->TwitterApi->search($row->search_key, $row->last_acquired);
 
             foreach (array_reverse($tweets->statuses) as $tweet) {
                 // Callbackへ通知
@@ -54,7 +60,8 @@ class TweetsNotifierShell extends Shell {
      * @param NotifyInformation $notifyInformation
      * @param \stdClass         $tweet
      */
-    public function notice($notifyInformation, $tweet) {
+    public function notice($notifyInformation, $tweet)
+    {
         $title = '新着ツイート通知(' . $notifyInformation->search_key . ')';
         $text = $tweet->user->name . ' '
             . '@' . $tweet->user->screen_name . "\n"
@@ -65,43 +72,18 @@ class TweetsNotifierShell extends Shell {
         $this->log('title   :' . $title, LogLevel::INFO);
         $this->log('text    :' . $text, LogLevel::INFO);
 
-        if (preg_match('/^email@/', $notifyInformation->callback)) {
-            // メール通知
-            $to = preg_replace('/^email@/', '', $notifyInformation->callback);
-            $this->getMailer('User')->send('tweetNotify', [$to, $title, $text]);
-        } else if (preg_match('/^slack@/', $notifyInformation->callback)) {
-            // Slack通知
-            $url = preg_replace('/^slack@/', '', $notifyInformation->callback);
-            $this->noticeToSlack($url, $title, $text);
-        }
-    }
+        $component = $notifyInformation->component;
+        $callback = $notifyInformation->callback;
 
-    /**
-     * Slack通知
-     * @param string $url [Webhook URL]欄に表示されているURL
-     * @param string $title
-     * @param string $text
-     */
-    public function noticeToSlack($url, $title, $text) {
-        // Slackに投稿するメッセージ
-        $msg = ['username' => $title, 'text' => $text];
-        $msg = json_encode($msg);
-        $msg = 'payload=' . urlencode($msg);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $msg);
-        curl_exec($ch);
-        curl_close($ch);
+        // 通知
+        $this->$component->notice($callback, $title, $text);
     }
 
     /**
      * @return TwitterOAuth
      */
-    protected function getTwitterOAuth() {
+    protected function getTwitterOAuth()
+    {
         // TODO Twitter OAuthキー
         $access_token = '2896602344-sSIsBFsAAmlwzpHTRgGChf82d8GX4aqJcnKoy9g';
         $access_token_secret = 'nv9P5DPByzYo1qsAdHAMyXZEOVk947KH9dB22WPDqXyav';

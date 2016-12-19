@@ -11,6 +11,7 @@
         <?php
             echo $this->Form->input('search_key');
             echo $this->Form->input('callback');
+            echo $this->Form->input('component');
             echo $this->Form->input('last_acquired');
         ?>
     </fieldset>

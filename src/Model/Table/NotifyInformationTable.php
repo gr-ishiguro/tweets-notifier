@@ -58,6 +58,9 @@ class NotifyInformationTable extends Table
             ->allowEmpty('callback');
 
         $validator
+            ->allowEmpty('component');
+
+        $validator
             ->allowEmpty('last_acquired');
 
         return $validator;

@@ -11,6 +11,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\Time $modified
  * @property string $search_key
  * @property string $callback
+ * @property string $component
  * @property string $last_acquired
  */
 class NotifyInformation extends Entity

@@ -15,6 +15,10 @@
             <td><?= h($notifyInformation->search_key) ?></td>
         </tr>
         <tr>
+            <th scope="row"><?= __('Component') ?></th>
+            <td><?= h($notifyInformation->component) ?></td>
+        </tr>
+        <tr>
             <th scope="row"><?= __('Last Acquired') ?></th>
             <td><?= h($notifyInformation->last_acquired) ?></td>
         </tr>
