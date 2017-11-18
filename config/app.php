@@ -85,7 +85,7 @@ return [
      */
     'Cache' => [
         'default' => [
-            'className' => 'Memcached',
+            'className' => 'File',
         ],
 
         /**
@@ -95,9 +95,10 @@ return [
          * If you set 'className' => 'Null' core cache will be disabled.
          */
         '_cake_core_' => [
-            'className' => 'Memcached',
+            'className' => 'File',
             'prefix' => 'myapp_cake_core_',
             'duration' => '+2 minutes',
+            'path' => CACHE,
             'servers'   => env('MEMCACHIER_SERVERS'),
             'username'  => env('MEMCACHIER_USERNAME'),
             'password'  => env('MEMCACHIER_PASSWORD'),
@@ -110,9 +111,10 @@ return [
          * Duration will be set to '+1 year' in bootstrap.php when debug = false
          */
         '_cake_model_' => [
-            'className' => 'Memcached',
+            'className' => 'File',
             'prefix' => 'myapp_cake_model_',
             'duration' => '+2 minutes',
+            'path' => CACHE,
             'servers'   => env('MEMCACHIER_SERVERS'),
             'username'  => env('MEMCACHIER_USERNAME'),
             'password'  => env('MEMCACHIER_PASSWORD'),
