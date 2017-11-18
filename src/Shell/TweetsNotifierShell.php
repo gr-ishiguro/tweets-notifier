@@ -63,8 +63,8 @@ class TweetsNotifierShell extends Shell
     public function notice($notifyInformation, $tweet)
     {
         $title = '新着ツイート通知(' . $notifyInformation->search_key . ')';
-        $text = $tweet->user->name . ' '
-            . '@' . $tweet->user->screen_name . "\n"
+        $text = "https://twitter.com/{$tweet->user->screen_name}/status/{$tweet->id}\n"
+            . "{$tweet->user->name} @{$tweet->user->screen_name}\n"
             . date('Y-m-d H:i:s', strtotime($tweet->created_at)) . "\n"
             . $tweet->text;
 
