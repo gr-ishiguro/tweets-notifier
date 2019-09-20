@@ -45,6 +45,10 @@ class TweetsNotifierShell extends Shell
             $tweets = $this->TwitterApi->search($row->search_key, $row->last_acquired);
 
             foreach (array_reverse($tweets->statuses) as $tweet) {
+            	if (!empty($tweet->retweeted_status)) {
+            		continue;
+            	}
+            	
                 // Callbackへ通知
                 $this->notice($row, $tweet);
 
