@@ -5,14 +5,12 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": ">=5.5.9",
-        "ext-memcached": "*",
-        "cakephp/cakephp": "3.3.*",
-        "mobiledetect/mobiledetectlib": "2.*",
-        "cakephp/migrations": "~1.0",
-        "cakephp/plugin-installer": "*",
-        "cakephp/debug_kit": "~3.2",
-        "abraham/twitteroauth": "^0.7.0"
+        "cakephp/cakephp": "~3.8.0",
+        "mobiledetect/mobiledetectlib": "~2.8.0",
+        "cakephp/migrations": "~1.7.0",
+        "cakephp/plugin-installer": "~1.1.0",
+        "cakephp/debug_kit": "~3.20.0",
+        "abraham/twitteroauth": "^1.0.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",
