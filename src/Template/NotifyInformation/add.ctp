@@ -9,10 +9,10 @@
     <fieldset>
         <legend><?= __('Add Notify Information') ?></legend>
         <?php
-            echo $this->Form->control('search_key', ['type' => 'input']);
-            echo $this->Form->control('callback', ['type' => 'input']);
-            echo $this->Form->control('component', ['type' => 'input']);
-            echo $this->Form->control('last_acquired', ['type' => 'input']);
+            echo $this->Form->control('search_key');
+            echo $this->Form->control('callback');
+            echo $this->Form->control('component');
+            echo $this->Form->control('last_acquired');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
