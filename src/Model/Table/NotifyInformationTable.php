@@ -32,9 +32,9 @@ class NotifyInformationTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('notify_information');
-        $this->displayField('id');
-        $this->primaryKey('id');
+        $this->setTable('notify_information');
+        $this->setDisplayField('id');
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }
@@ -49,19 +49,19 @@ class NotifyInformationTable extends Table
     {
         $validator
             ->integer('id')
-            ->allowEmpty('id', 'create');
+            ->allowEmptyString('id', 'create');
 
         $validator
-            ->allowEmpty('search_key');
+            ->allowEmptyString('search_key');
 
         $validator
-            ->allowEmpty('callback');
+            ->allowEmptyString('callback');
 
         $validator
-            ->allowEmpty('component');
+            ->allowEmptyString('component');
 
         $validator
-            ->allowEmpty('last_acquired');
+            ->allowEmptyString('last_acquired');
 
         return $validator;
     }
