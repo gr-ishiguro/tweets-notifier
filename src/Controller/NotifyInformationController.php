@@ -76,7 +76,7 @@ class NotifyInformationController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $notifyInformation = $this->NotifyInformation->patchEntity($notifyInformation, $this->request->data);
+            $notifyInformation = $this->NotifyInformation->patchEntity($notifyInformation, $this->request->getData());
             if ($this->NotifyInformation->save($notifyInformation)) {
                 $this->Flash->success(__('The notify information has been saved.'));
 
